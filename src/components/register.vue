@@ -4,23 +4,25 @@
       &nbsp;
     </el-col>
     <el-col :span="8">
-      <el-form :model="registerInfo" :rules="rules" ref="registerInfo" width="100%" label-width="80px">
-        <el-form-item label="用户名">
-          <el-input v-model="registerInfo.code"></el-input>
-        </el-form-item>
-        <el-form-item label="昵称">
-          <el-input v-model="registerInfo.name"></el-input>
-        </el-form-item>
-        <el-form-item label="密码">
-          <el-input v-model="registerInfo.password"></el-input>
-        </el-form-item>
-        <el-form-item label="确认密码">
-          <el-input v-model="registerInfo.confirmPwd"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="onCreate">注册</el-button>
-        </el-form-item>
-      </el-form>
+      <el-card class="box-card">
+        <el-form :model="registerInfo" :rules="rules" ref="registerInfo" label-width="80px" label-position="top">
+          <el-form-item label="用户名" >
+            <el-input v-model="registerInfo.code"></el-input>
+          </el-form-item>
+          <el-form-item label="昵称">
+            <el-input v-model="registerInfo.name"></el-input>
+          </el-form-item>
+          <el-form-item label="密码">
+            <el-input v-model="registerInfo.password"></el-input>
+          </el-form-item>
+          <el-form-item label="确认密码">
+            <el-input v-model="registerInfo.confirmPwd"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="onCreate" class="fullWidthBtn">注册</el-button>
+          </el-form-item>
+        </el-form>
+      </el-card>
     </el-col>
   </el-row>
 </template>
@@ -78,12 +80,23 @@
             }).then(res => {
               if (res.success) {
                 console.log(res.info)
+              } else {
+                this.$message.error(res.info);
               }
             })
           }
-        });
+        })
       }
     }
   }
 
 </script>
+
+<style>
+  .fullWidthBtn {
+    width: 100%;
+  }
+  .el-form-item {
+    text-align: left;
+  }
+</style>
