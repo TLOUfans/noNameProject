@@ -87,7 +87,7 @@
       //验证session
       const token = sessionStorage.getItem('user')
       checkSession().then(res => {
-        if (!(res.info.token == token)) {
+        if (!res.info.token || !(res.info.token == token)) {
           this.$router.push({
             path: '/login'
           })
@@ -109,7 +109,7 @@
     margin-bottom: 6px;
   }
   .container {
-    backgroud-color:white;
+    backgroud-color: white;
     position: absolute;
     top: 0px;
     left: 0;
