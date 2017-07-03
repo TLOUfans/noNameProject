@@ -2,6 +2,8 @@
 
 const model = require('../database/model.js')
 const _ = require('lodash')
+const jwt = require('jsonwebtoken')
+const util = require('../util/util.js')
 
 const User = model('users')
 
@@ -87,13 +89,14 @@ const listUser = async function (ctx) {
   ctx.body = result
 }
 
+//登陆
 const login = async function (ctx) {
   const data = ctx.request.body
   const code = data.code
   const password = data.password
-  const userInfo = User.findOne({
+  const userInfo = await User.findOne({
     code: code
-  })
+  }).catch(err => err)
   if (userInfo) {
     if (userInfo.password != password) {
       ctx.body = {
@@ -101,9 +104,18 @@ const login = async function (ctx) {
         info: '密码错误'
       }
     } else {
+      const userToken = {
+        id: userInfo.id,
+        code: userInfo.code,
+        name: userInfo.name
+      }
+      const secret = 'power-nanjin'
+      ctx.session.user = userToken
+      const token = jwt.sign(userToken, secret)
+      ctx.session.token = token
       ctx.body = {
         success: true,
-        info: userInfo
+        info: token
       }
     }
   } else {
@@ -114,9 +126,44 @@ const login = async function (ctx) {
   }
 }
 
+//注销
+const logout = async function(ctx) {
+  ctx.session.token = null
+  ctx.session.user = null
+  ctx.body = {
+    success: true,
+    info: '注销成功'
+  }
+}
+
+//获取session
+const checkSession = async function(ctx) {
+  const token = ctx.session.token
+  const user = ctx.session.user
+  ctx.body = {
+    success: true,
+    info: {
+      token: token,
+      user: user
+    }
+  }
+}
+
+//获取验证码
+const getIdCode = async function(ctx) {
+  let code = util.idCode()
+  ctx.body = {
+    succss: true,
+    info: code
+  }
+}
+
 module.exports = {
   register,
   delUser,
   listUser,
-  login
+  login,
+  logout,
+  checkSession,
+  getIdCode
 }
